@@ -1,7 +1,6 @@
 GCC = g++
-NVCC = nvcc
 
-LIB  = -lgomp -lm -lm -ldl
+LIB  = -lgomp -lm -ldl
 
 GCC_COPT = -fopenmp
 
