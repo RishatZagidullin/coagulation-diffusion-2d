@@ -20,19 +20,32 @@ int main(int argc, char ** argv)
     double start = get_wall_time();
 
     int N = 100;
-    int M = 100;
+    int M = N;
     int K = 1;
     double dd = 0.05;
-    grid_params proj_grid = grid_params(K, M, N, -0.1, -2.0, -2.0, dd);
+    grid_params proj_grid = grid_params(K, N, M, -0.01, -2.5, -2.5, dd);
     projection_reg proj(proj_grid);
 
     double dt = 0.01;
+    int TIME_MAX = 100;
     Vector3d<int> source{0, std::atoi(argv[1]), std::atoi(argv[2])};
-    int S = 32;
-    solvers::Diffusion3d_reg<double> eqn(0.1, N, M, K, dd, dt, source);
+    int S = 1;
+
+    double size_dim = 1000.0; //1 km in meters
+    double time_dim = 48*60*60; // 48 hours in seconds
+    double diffusion_dim = 1e-4; // in m^2 s^-1
+
+    double diffusion_undim = diffusion_dim * pow(N*dd,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt); //3e-8;
+
+    std::cout << "dimensional size in meters: " << size_dim << "\n";
+    std::cout << "dimensional time in hours: " << time_dim/60/60 << "\n";
+    std::cout << "dimensional diffusion coef (in m^2 s^-1): " << diffusion_dim << "\n";
+    std::cout << "undimensional diffusion coef: " << diffusion_undim << "\n";
+
+    solvers::Diffusion3d_reg<double> eqn(diffusion_undim, N, M, K, dd, dt, source);
     solvers::Coagulation<double> coag(S, 1.0, dt);
 
-    int TIME_MAX = 100;
+    
     std::cout <<"Preprocessing time: "<<get_wall_time()-start<<"\n";
     start = get_wall_time();
 
