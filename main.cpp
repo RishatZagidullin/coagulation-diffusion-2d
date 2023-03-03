@@ -31,11 +31,13 @@ int main(int argc, char ** argv)
     Vector3d<int> source{0, std::atoi(argv[1]), std::atoi(argv[2])};
     int S = 1;
 
-    double size_dim = 1000.0; //1 km in meters
-    double time_dim = 48*60*60; // 48 hours in seconds
+    double hours = 48.0;
+    double kms = 1.0;
+    double size_dim = kms * 1000.0;
+    double time_dim = hours *60*60;
     double diffusion_dim = 1e-4; // in m^2 s^-1
 
-    double diffusion_undim = diffusion_dim * pow(N*dd,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt); //3e-8;
+    double diffusion_undim = diffusion_dim * pow(N*dd,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt);
 
     std::cout << "dimensional size in meters: " << size_dim << "\n";
     std::cout << "dimensional time in hours: " << time_dim/60/60 << "\n";
@@ -51,6 +53,13 @@ int main(int argc, char ** argv)
 
     double * data = new double [N*M*K*S];
     double * data_new = new double [N*M*K*S];
+
+    for (int i = 0; i < N*M*K*S; i++)
+    {
+        data[i] = 0.0;
+        data_new[i] = 0.0;
+    }
+
 
     for (int time = 0; time < TIME_MAX; time++)
     {
