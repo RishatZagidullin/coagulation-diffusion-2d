@@ -6,7 +6,7 @@ GCC_COPT = -fopenmp
 
 VPATH = ../:../utils:../solvers:../ppm:../geometry
 
-SOURCES_SOL = diffusion_reg.cpp vector3d.cpp coagulation.cpp ppm.cpp
+SOURCES_SOL = space2d_reg.cpp vector3d.cpp coagulation.cpp ppm.cpp
 SOURCES_MAIN = main.cpp
 
 OBJECTS_SOL = $(SOURCES_SOL:%.cpp=$(OBJDIR)/%.o)
