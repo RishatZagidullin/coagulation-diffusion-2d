@@ -20,18 +20,13 @@ namespace solvers
 
         T dt;
         int size;
-        T h;
+        T kernel;
 
-        T K(const int & u, const int &v, const T h) {
-            //double u1=(u+1.0) * h;
-            //double v1=(v+1.0) * h;
-            //double c = 1.;
-            double result = 2.0;//(c/u1+c/v1)*(u1+v1);
-            return result;
+        T K(const int & u, const int &v) {
+            return kernel;
         }
 
-        Coagulation(int size, T h, T dt);
+        Coagulation(int size, T dt, T kernel);
         void iteration(T * data, T * data_new, int coef);
-    private:
     };
 }

@@ -4,11 +4,11 @@
 namespace solvers
 {
     template<typename T>
-    Coagulation<T>::Coagulation(int size, T h, T dt)
+    Coagulation<T>::Coagulation(int size, T dt, T kernel)
     {
         this->dt = dt;
         this->size = size;
-        this->h = h;
+        this->kernel = kernel;
     }
 
     template<typename T>
@@ -33,20 +33,18 @@ namespace solvers
     template<typename T>
     T Coagulation<T>::L1(const int &N, const int &i, const T *n)
     {
-        //this * h is baseless, also I forgot the true direct formula
         T l1 = 0;
         for (int i1 = 0; i1 < i; i1++)
-            l1 += n[i1] * n[i-i1-1] * K(i - i1 - 1, i1, h);
+            l1 += n[i1] * n[i-i1-1] * K(i - i1 - 1, i1);
         return l1;
     }
 
     template<typename T>
     T Coagulation<T>::L2(const int &N, const int &i, const T *n)
     {
-        //this * h is baseless, also I forgot the true direct formula
         T l2 = 0;
         for (int i1 = 0; i1 < N; i1++)
-            l2 += n[i1] * K(i, i1, h);
+            l2 += n[i1] * K(i, i1);
         return l2;
     }
 
