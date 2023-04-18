@@ -81,10 +81,12 @@ int main(int argc, char ** argv)
 
     std::cout << "angle (in radians): " << angle/3.14159265358979311600 << " pi\n";
 
-    double J = 1.;
-    double J_dim = 1e6; // in m^-3 s^-1
+    double J_dim = std::stod(argv[6]); // in сm^-3 s^-1
     double kernel = 1.;
-    std::cout << "source term magnitude (in m^-3): " << J*J_dim << "\n";
+    
+    double J = J_dim > 100 ? 100 : J_dim;
+    double J_scale = J_dim > 100 ? J_dim/100 : 1;
+    std::cout << "source term magnitude (in cm^-3): " << J_dim << "\n";
 
     int radius_x = (int)(source_len_kms / (kms/M) );
     int radius_y = (int)(source_len_kms / (kms/N) );
@@ -149,11 +151,11 @@ int main(int argc, char ** argv)
                     }
                 }
             }
-            std::cout << "max concentration (in m^-3): " << maxi * J_dim << "\n";
+            std::cout << "max concentration (in cm^-3): " << maxi * J_scale << "\n";
             std::cout << "max undimensional concentration: " << maxi << "\n";
             std::ofstream concentration;
             concentration.open("concentration.txt");
-            concentration << maxi * J_dim;
+            concentration << maxi * J_scale;
             concentration.close();
         }
 
