@@ -18,12 +18,12 @@ int main(int argc, char ** argv)
 {
     double start = get_wall_time();
 
-    double hours = 12.0;
-    double kms = 1.0;
-    double source_len_kms = 0.01;
+    double hours = 6.0;
+    double kms = 10.0;
+    double source_len_kms = 0.1;//0.01;
     double size_dim = kms * 1000.0;
     double time_dim = hours *60*60;
-    double diffusion_dim = 1e-1; // in m^2 s^-1
+    double diffusion_dim = 1e0; // in m^2 s^-1
     double vel_dim = std::stod(argv[4]); // in m^1 s^-1
 
     double angle = std::stod(argv[5])/180.*3.14159265358979311600;
@@ -65,7 +65,7 @@ int main(int argc, char ** argv)
     std::cout << "TOTAL ITERATIONS: " << TIME_MAX << "\n";
 
     Vector3d<int> source{(int) (std::stod(argv[1])*M), (int) (std::stod(argv[2])*N), 0};
-    int S = 8;
+    int S = 10;
 
     double diffusion_undim_x = diffusion_dim * pow(M*dx,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt);
     double diffusion_undim_y = diffusion_dim * pow(N*dy,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt);

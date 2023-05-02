@@ -27,9 +27,9 @@ int create_ppm(int N, int M, double const * const data, std::string filename, do
 
             int res = (int) ( (log10(val+1e-12)+12)/12 * 255);
 
-            if (res > 255)
-                std::cout << "pixel more than 255, shouldn't happen\n";
-            image_data[pixel] = res;//res > 255 ? 255 : res;
+            //if (res > 255)
+            //    std::cout << "pixel more than 255, shouldn't happen\n";
+            image_data[pixel] = res > 255 ? 255 : res;
 
             pixel++;
         }
