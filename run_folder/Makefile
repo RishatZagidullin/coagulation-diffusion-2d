@@ -17,7 +17,7 @@ OBJDIR = build
 all: tet.exe
 
 tet.exe: $(OBJECTS_MAIN) $(OBJECTS_SOL)
-	$(GCC) $^ -o $@ $(LIB)
+	$(GCC) $^ -o $@ $(LIB) $(GCC_COPT)
 
 $(OBJDIR)/%.o: %.cpp
 	$(GCC) -c $(GCC_COPT) $< -o $@

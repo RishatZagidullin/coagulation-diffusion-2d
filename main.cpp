@@ -123,11 +123,13 @@ int main(int argc, char ** argv)
     {
         if(std::atoi(argv[3]) == 1)
         {
+            #pragma omp parallel for
             for (int i = 0; i < N*M; i++)
                 coag.iteration(data+i, data_new+i, N*M);
             std::swap(data, data_new);
         }
 
+        #pragma omp parallel for
         for (int i = 0; i < S; i++)
         {
             bool is_monomer = (i==0);
