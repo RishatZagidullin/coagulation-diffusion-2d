@@ -59,13 +59,13 @@ int main(int argc, char ** argv)
         M = N;
     }
 
-    double dt = 1./TIME_MAX;
+    float dt = 1./TIME_MAX;
 
     std::cout << "X: " << M << " Y: " << N << "\n";
     std::cout << "TOTAL ITERATIONS: " << TIME_MAX << "\n";
 
     Vector3d<int> source{(int) (std::stod(argv[1])*M), (int) (std::stod(argv[2])*N), 0};
-    int S = 10;
+    int S = 500;
 
     double diffusion_undim_x = diffusion_dim * pow(M*dx,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt);
     double diffusion_undim_y = diffusion_dim * pow(N*dy,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt);
@@ -82,7 +82,6 @@ int main(int argc, char ** argv)
     std::cout << "angle (in radians): " << angle/3.14159265358979311600 << " pi\n";
 
     double J_dim = std::stod(argv[6]); // in сm^-3 s^-1
-    double kernel = 1.;
     
     double J = J_dim > 100 ? 100 : J_dim;
     double J_scale = J_dim > 100 ? J_dim/100 : 1;
@@ -97,16 +96,17 @@ int main(int argc, char ** argv)
         std::cout << "radius x: " << radius_x << " raidus y: " << radius_y << "\n";
         return -1;
     }
-    solvers::Space2d_reg<double> eqn(diffusion_undim_x, diffusion_undim_y, J, N, M, dx, dy, dt, source,
+    solvers::Space2d_reg<float> eqn(diffusion_undim_x, diffusion_undim_y, J, N, M, dx, dy, dt, source,
                                      vel_undim_x*x_vel, vel_undim_y*y_vel, radius_x, radius_y);
-    solvers::Coagulation<double> coag(S, dt, kernel);
+    auto kernel = solvers::default_crossed_kernel(1e-4, S);
+    solvers::Coagulation<float> coag(S, dt, kernel);
 
     
     std::cout << "Preprocessing time: " << get_wall_time() - start << "\n";
     start = get_wall_time();
 
-    double * data = new double [N*M*S];
-    double * data_new = new double [N*M*S];
+    float * data = new float [N*M*S];
+    float * data_new = new float [N*M*S];
 
     for (int i = 0; i < N*M*S; i++)
     {
@@ -123,9 +123,10 @@ int main(int argc, char ** argv)
     {
         if(std::atoi(argv[3]) == 1)
         {
-            #pragma omp parallel for
+            //#pragma omp parallel for
             for (int i = 0; i < N*M; i++)
-                coag.iteration(data+i, data_new+i, N*M);
+                //coag.iteration_direct(data+i, data_new+i, N*M);
+                coag.iteration_low_rank(data+i, data_new+i, N*M);
             std::swap(data, data_new);
         }
 
@@ -161,8 +162,9 @@ int main(int argc, char ** argv)
             concentration.close();
         }
 
-        if (time % (int) (TIME_MAX/100.) == 0)
+        if (time == 0 || time == TIME_MAX-1)
         {
+            #pragma omp parallel for
             for (int i = 0; i < S; i++)
             {
                 std::string name = std::string("./imgs/") + 
@@ -174,7 +176,6 @@ int main(int argc, char ** argv)
             }
             img_num++;
         }
-
         printProgress((double)time/TIME_MAX);
     }
     //coag_data.close();

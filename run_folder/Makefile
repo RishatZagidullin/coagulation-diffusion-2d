@@ -1,12 +1,12 @@
 GCC = g++
 
-LIB  = -lgomp -lm -ldl
+LIB  = -lgomp -lm -ldl -lfftw3 -lblas -llapacke
 
-GCC_COPT = -fopenmp
+GCC_COPT = -fopenmp -DFFTW -O3 #-g
 
-VPATH = ../:../utils:../solvers:../ppm:../geometry
+VPATH = ../:../utils:../solvers:../ppm:../geometry:../solvers/coagulation
 
-SOURCES_SOL = space2d_reg.cpp vector3d.cpp coagulation.cpp ppm.cpp
+SOURCES_SOL = space2d_reg.cpp vector3d.cpp coagulation.cpp ppm.cpp blas_double.cpp blas_int.cpp cross.cpp matrix.cpp maxvol.cpp parallel_cross_omp.cpp tensor.cpp tensor_train.cpp convolution.cpp
 SOURCES_MAIN = main.cpp
 
 OBJECTS_SOL = $(SOURCES_SOL:%.cpp=$(OBJDIR)/%.o)
