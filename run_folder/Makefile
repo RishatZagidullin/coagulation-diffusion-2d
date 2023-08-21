@@ -1,8 +1,17 @@
 GCC = g++
 
-LIB  = -lgomp -lm -ldl -lfftw3 -lblas -llapacke
 
-GCC_COPT = -fopenmp -DFFTW -O3 #-g
+FFTW_INSTALL_PATH = ${FFTW}
+FFTWCFLAGS=-I${FFTW_INSTALL_PATH}/include
+FFTWLDFLAGS=-L${FFTW_INSTALL_PATH}/lib
+
+MKL_INSTALL_PATH = ${MKLROOT}
+MKLCFLAGS = -I${MKL_INSTALL_PATH}/include
+MKLLDFLAGS = -L${MKL_INSTALL_PATH}/lib
+
+LIB  = -lgomp -lm -ldl -lfftw3 -lmkl_rt
+
+GCC_COPT = -fopenmp -DFFTW -DMKL -O3 #-g
 
 VPATH = ../:../utils:../solvers:../ppm:../geometry:../solvers/coagulation
 
@@ -16,14 +25,14 @@ OBJDIR = build
 
 all: tet.exe
 
-tet.exe: $(OBJECTS_MAIN) $(OBJECTS_SOL)
-	$(GCC) $^ -o $@ $(LIB) $(GCC_COPT)
+tet.exe: $(OBJECTS_MAIN) $(OBJECTS_SOL) 
+	$(GCC) $^ -o $@ $(LIB) $(FFTWLDFLAGS) $(MKLLDFLAGS) $(GCC_COPT)
 
 $(OBJDIR)/%.o: %.cpp
-	$(GCC) -c $(GCC_COPT) $< -o $@
+	$(GCC) -c $(GCC_COPT) $(FFTWCFLAGS) $(MKLCFLAGS) $< -o $@
 
 $(OBJDIR)/%.o: %.c
-	$(GCC) -c $(GCC_COPT) $< -o $@
+	$(GCC) -c $(GCC_COPT) $(FFTWCFLAGS) $(MKLCFLAGS) $< -o $@
 
 clean:
 	rm -rf $(OBJDIR)/*.o *.exe
