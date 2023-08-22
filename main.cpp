@@ -59,7 +59,7 @@ int main(int argc, char ** argv)
         M = N;
     }
 
-    float dt = 1./TIME_MAX;
+    double dt = 1./TIME_MAX;
 
     std::cout << "X: " << M << " Y: " << N << "\n";
     std::cout << "TOTAL ITERATIONS: " << TIME_MAX << "\n";
@@ -96,17 +96,17 @@ int main(int argc, char ** argv)
         std::cout << "radius x: " << radius_x << " raidus y: " << radius_y << "\n";
         return -1;
     }
-    solvers::Space2d_reg<float> eqn(diffusion_undim_x, diffusion_undim_y, J, N, M, dx, dy, dt, source,
+    solvers::Space2d_reg<double> eqn(diffusion_undim_x, diffusion_undim_y, J, N, M, dx, dy, dt, source,
                                      vel_undim_x*x_vel, vel_undim_y*y_vel, radius_x, radius_y);
     auto kernel = solvers::default_crossed_kernel(1e-4, S);
-    solvers::Coagulation<float> coag(S, dt, kernel);
+    solvers::Coagulation<double> coag(S, dt, kernel);
 
     
     std::cout << "Preprocessing time: " << get_wall_time() - start << "\n";
     start = get_wall_time();
 
-    float * data = new float [N*M*S];
-    float * data_new = new float [N*M*S];
+    double * data = new double [N*M*S];
+    double * data_new = new double [N*M*S];
 
     for (int i = 0; i < N*M*S; i++)
     {

@@ -102,6 +102,6 @@ namespace solvers
     }
 
 
-    //template class Coagulation<double>;
-    template class Coagulation<float>;
+    template class Coagulation<double>;
+    //template class Coagulation<float>;
 }

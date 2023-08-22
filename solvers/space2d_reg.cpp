@@ -233,5 +233,5 @@ namespace solvers
     }
 
     template class Space2d_reg<double>;
-    template class Space2d_reg<float>;
+    //template class Space2d_reg<float>;
 }

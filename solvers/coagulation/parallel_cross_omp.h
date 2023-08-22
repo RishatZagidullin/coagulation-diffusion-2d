@@ -49,7 +49,6 @@ class TCross_Parallel_v1: public TCross_Base<TCross_Parallel_v1_Work_Data, TCros
 {
     private:
         double *U, *V, *C, *hat_A_inv, *RT, tolerance, norm, *AR, *CAT;
-        float *U_float, *V_float;
 	//**************************RISHAT*ADDED*BEGIN*************************
 #ifdef CUDA_FFT
 	double *d_U, *d_V;
@@ -69,10 +68,10 @@ class TCross_Parallel_v1: public TCross_Base<TCross_Parallel_v1_Work_Data, TCros
 	void smol_conv(double* &, cufftHandle &, cublasHandle_t &, double * &);
 #endif
 #ifdef FFTW
-	float *smol_conv(float* &, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse);
+	double *smol_conv(double* &, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse);
 #endif
 #ifdef MKL_FFT
-	float *smol_conv(float* &, VSLConvTaskPtr *&);
+	double *smol_conv(double* &, VSLConvTaskPtr *&);
 #endif
 	//**************************RISHAT*ADDED*END***************************
     public:
@@ -85,16 +84,16 @@ class TCross_Parallel_v1: public TCross_Base<TCross_Parallel_v1_Work_Data, TCros
         void smol_conv_trapezoids(double *&, cufftHandle &, cublasHandle_t &, double *&);
 #endif
 #ifndef CUDA_FFT
-	void matvec(float *&x, float *&result, const char &option='f');
+	void matvec(double *&x, double *&result, const char &option='f');
 #endif
 #ifdef FFTW
-        float *smol_conv_trapezoids(float *&, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse);
+        double *smol_conv_trapezoids(double *&, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse);
 #endif
 #ifdef MKL_FFT
-	float *smol_conv_trapezoids(float *&, VSLConvTaskPtr *&);
+	double *smol_conv_trapezoids(double *&, VSLConvTaskPtr *&);
 #endif
 	//**************************RISHAT*ADDED*END*************************
-        float *smol_conv_discrete(float *&, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse);
+        double *smol_conv_discrete(double *&, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse);
         double value(const int &, const int &);
         int get_row_number(const int &) const;
         int get_column_number(const int &) const;

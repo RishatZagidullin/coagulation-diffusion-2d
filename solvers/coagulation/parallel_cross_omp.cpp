@@ -83,16 +83,6 @@ bool TCross_Parallel_v1::Stopping_Criteria(TCross_Parallel_v1_Work_Data &work_da
         work_data.current_row = NULL;
         work_data.current_column = NULL;
 
-        U_float = (float *) malloc(this->rank * this->get_rows_number() * sizeof(float));
-        V_float = (float *) malloc(this->rank * this->get_columns_number() * sizeof(float));
-        for (int i = 0; i < this->rank * this->get_rows_number(); i++)
-        {
-            U_float[i] = float (U[i]);   
-        }
-        for (int i = 0; i < this->rank * this->get_columns_number(); i++)
-        {
-            V_float[i] = float (V[i]); 
-        }
         return true;
     }
     else
@@ -570,7 +560,7 @@ int TCross_Parallel_v1::get_column_number(const int & k) const
 
 //*******************************RISHAT*ADDED*BEGIN****************************************
 #ifdef FFTW
-float *TCross_Parallel_v1::smol_conv(float * &x, fftw_complex * & ub, fftw_complex * & vb, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse)
+double *TCross_Parallel_v1::smol_conv(double * &x, fftw_complex * & ub, fftw_complex * & vb, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse)
 {
 	int R = this->get_rank();
 	int N = this->rows_number;
@@ -578,13 +568,13 @@ float *TCross_Parallel_v1::smol_conv(float * &x, fftw_complex * & ub, fftw_compl
 
 	if (R <= 0) return NULL;
 
-	float ones[R];
+	double ones[R];
 	for (int j = 0; j < R; j++)
 	{
 		ones[j] = 1.0l;
 	}
-       	float *tmp_res = (float *) malloc(R * N * sizeof(float));
-       	float *result = (float *) malloc(N * sizeof(float));
+       	double *tmp_res = (double *) malloc(R * N * sizeof(double));
+       	double *result = (double *) malloc(N * sizeof(double));
 	//#pragma omp parallel for collapse(2)
       	for (int r = 0; r < R; r++)
       	{
@@ -628,11 +618,11 @@ float *TCross_Parallel_v1::smol_conv(float * &x, fftw_complex * & ub, fftw_compl
 	return result;
 }
 
-float *TCross_Parallel_v1::smol_conv_trapezoids(float * &x, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse)
+double *TCross_Parallel_v1::smol_conv_trapezoids(double * &x, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse)
 {
 	int R = this->get_rank();
 	int N = this->rows_number;
-	float *result = (float *)malloc (N *sizeof(float));
+	double *result = (double *)malloc (N *sizeof(double));
 	free(result);
 	result = this->smol_conv(x, ub, uv, plan_v, plan_u, plan_inverse);
 	result[0] = 0.0;
@@ -645,7 +635,7 @@ float *TCross_Parallel_v1::smol_conv_trapezoids(float * &x, fftw_complex * & ub,
 }
 #endif
 #ifdef MKL_FFT
-float *TCross_Parallel_v1::smol_conv(float * &x, VSLConvTaskPtr * &tasks)
+double *TCross_Parallel_v1::smol_conv(double * &x, VSLConvTaskPtr * &tasks)
 {
 	int R = this->get_rank();
 	int N = this->rows_number;
@@ -686,11 +676,11 @@ float *TCross_Parallel_v1::smol_conv(float * &x, VSLConvTaskPtr * &tasks)
         return result;
 }
 
-float *TCross_Parallel_v1::smol_conv_trapezoids(float * &x, VSLConvTaskPtr * &tasks)
+double *TCross_Parallel_v1::smol_conv_trapezoids(double * &x, VSLConvTaskPtr * &tasks)
 {
 	int R = this->get_rank();
 	int N = this->rows_number;
-	float *result = (float *)malloc (N *sizeof(float));
+	double *result = (double *)malloc (N *sizeof(double));
 	free(result);
 	result = this->smol_conv(x, tasks);
 	result[0] = 0.0;
@@ -704,10 +694,10 @@ float *TCross_Parallel_v1::smol_conv_trapezoids(float * &x, VSLConvTaskPtr * &ta
 #endif
 //*******************************RISHAT*ADDED*END******************************************
 
-float *TCross_Parallel_v1::smol_conv_discrete(float *&x, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse)
+double *TCross_Parallel_v1::smol_conv_discrete(double *&x, fftw_complex * & ub, fftw_complex * & uv, fftw_plan * & plan_v, fftw_plan *& plan_u, fftw_plan *& plan_inverse)
 {
 	int N = this->rows_number;
-	float *result;// = (float *)malloc (N * sizeof(float));
+	double *result;
 	//free(result);
 	result = this ->smol_conv(x, ub, uv, plan_v, plan_u, plan_inverse);
 	double bubble1, bubble2;
@@ -722,19 +712,18 @@ float *TCross_Parallel_v1::smol_conv_discrete(float *&x, fftw_complex * & ub, ff
 	return result;
 }
 #ifndef CUDA_FFT
-void TCross_Parallel_v1::matvec(float* &x, float *&result, const char &option)
+void TCross_Parallel_v1::matvec(double* &x, double *&result, const char &option)
 {
 	int R = this->get_rank();
 	int M = this->rows_number;
 	int N = this->columns_number;
-	//float *result = (float*) malloc( M * sizeof(float) );
-	float w;
+	double w;
 
 
-        float *buff  = (float*) malloc( R * sizeof(float) );
-        gemv(CblasColMajor, CblasTrans, N, R, 1.0l, V_float, N, x, 1, 0.0l, buff, 1);
+        double *buff  = (double*) malloc( R * sizeof(double) );
+        gemv(CblasColMajor, CblasTrans, N, R, 1.0l, V, N, x, 1, 0.0l, buff, 1);
 
-        gemv(CblasColMajor, CblasNoTrans, M, R, 1.0l, U_float, M, buff, 1, 0.0l, result, 1);
+        gemv(CblasColMajor, CblasNoTrans, M, R, 1.0l, U, M, buff, 1, 0.0l, result, 1);
         free(buff);
 	return ;
 }

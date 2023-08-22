@@ -3,7 +3,7 @@
 using namespace std;
 
 
-int create_ppm(int N, int M, float const * const data, std::string filename, double maxi) {
+int create_ppm(int N, int M, double const * const data, std::string filename, double maxi) {
     int img_N = 256;
     int img_M = 256;
     size_t SIZE = img_N * img_M;
@@ -20,12 +20,13 @@ int create_ppm(int N, int M, float const * const data, std::string filename, dou
     for (int row = 0; row < img_N; row++) {
         for (int col = 0; col < img_M; col++) {
 
-            int row_id = (int) (((float) row/ (float) img_N) * N);
-            int col_id = (int) (((float) col/ (float) img_M) * M);
+            int row_id = (int) (((double) row/ (double) img_N) * N);
+            int col_id = (int) (((double) col/ (double) img_M) * M);
 
-            float val = data[col_id+row_id*M]/maxi;
+            double val = data[col_id+row_id*M]/maxi;
 
             int res = (int) ( (log10(val+1e-12)+12)/12 * 255);
+            if (res < 0) std::cout << ( (log10(val+1e-12)+12)/12 * 255) << " " << val << "\n";
 
             //if (res > 255)
             //    std::cout << "pixel more than 255, shouldn't happen\n";
