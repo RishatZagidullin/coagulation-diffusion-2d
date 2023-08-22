@@ -23,7 +23,7 @@ int create_ppm(int N, int M, float const * const data, std::string filename, dou
             int row_id = (int) (((float) row/ (float) img_N) * N);
             int col_id = (int) (((float) col/ (float) img_M) * M);
 
-            double val = data[col_id+row_id*M]/maxi;
+            float val = data[col_id+row_id*M]/maxi;
 
             int res = (int) ( (log10(val+1e-12)+12)/12 * 255);
 

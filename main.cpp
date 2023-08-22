@@ -114,9 +114,6 @@ int main(int argc, char ** argv)
         data_new[i] = 0.0;
     }
 
-    //std::ofstream coag_data;
-    //coag_data.open("coag.txt");
-
     int img_num = 0;
     double maxi = 0.0;
     for (int time = 0; time < TIME_MAX; time++)
@@ -162,23 +159,20 @@ int main(int argc, char ** argv)
             concentration.close();
         }
 
-        if (time == 0 || time == TIME_MAX-1)
+        if (time == TIME_MAX-1)
         {
             #pragma omp parallel for
             for (int i = 0; i < S; i++)
             {
                 std::string name = std::string("./imgs/") + 
                                std::to_string(i) + 
-                               std::string("_res_") + 
-                               std::to_string(img_num) + 
-                               std::string(".ppm");
+                               std::string("_res.ppm");
                 create_ppm(N, M, data+i*N*M, name, maxi);
             }
             img_num++;
         }
         printProgress((double)time/TIME_MAX);
     }
-    //coag_data.close();
     std::cout <<"\nComputation time: "<< get_wall_time()-start<<"\n";
     delete [] data;
     delete [] data_new;

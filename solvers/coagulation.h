@@ -16,7 +16,7 @@ namespace solvers
     {
     public:
         TKernel (const int &m, const int &n) : TMatrix(m , n) {}
-        double value (const int &i, const int &j) override {return 1.;}
+        double value (const int &i, const int &j) override {return 5.;}
     };
 
     TCross_Parallel_v1 default_crossed_kernel(const double & tolerance, 
