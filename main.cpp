@@ -4,6 +4,7 @@
 #include "ppm/ppm.h"
 #include <time.h>
 #include <sys/time.h>
+#include <vector>
 
 double get_wall_time(){
     struct timeval time;
@@ -12,6 +13,47 @@ double get_wall_time(){
         return 0;
     }
     return (double)time.tv_sec + (double)time.tv_usec * .000001;
+}
+
+std::vector<Vector3d<int>> generate_source(int num, double x, double y, int M, int N)
+{
+    std::vector<Vector3d<int>> result;
+    std::vector<double> shifts_x;
+    std::vector<double> shifts_y;
+    if (num == 1)
+    {
+        shifts_x = {0.0};
+        shifts_y = {0.0};
+    }
+    else if (num == 2)
+    {
+        shifts_x = {0.0, 0.0};
+        shifts_y = {0.1, -0.1};
+    }
+    else if (num == 3)
+    {
+        shifts_x = {-0.1, 0.12, -0.06};
+        shifts_y = {-0.1, -0.06, 0.1};
+    }
+    else if (num == 4)
+    {
+        shifts_x = {-0.06, 0.0, 0.06, 0.0};
+        shifts_y = {0.0, -0.1, 0.0, 0.1};
+    }
+    else if (num == 20)
+    {
+        ;
+    }
+    else
+    {
+        std::cout << "Wrong number of source points: it needs to be 1, 2, 3, 4 or 20\n";
+    }
+    for (int jj = 0; jj < num; jj++)
+    {
+        Vector3d<int> source{(int) (x*M+shifts_x[jj]*M), (int) (y*N+shifts_y[jj]*N), 0};
+        result.push_back(source);
+    }
+    return result;
 }
 
 int main(int argc, char ** argv)
@@ -64,8 +106,11 @@ int main(int argc, char ** argv)
     std::cout << "X: " << M << " Y: " << N << "\n";
     std::cout << "TOTAL ITERATIONS: " << TIME_MAX << "\n";
 
-    Vector3d<int> source{(int) (std::stod(argv[1])*M), (int) (std::stod(argv[2])*N), 0};
-    int S = 500;
+    int num_points = std::stoi(argv[7]);
+
+    std::vector<Vector3d<int>> source = generate_source(num_points, std::stod(argv[1]), std::stod(argv[2]), M, N);
+    //int S = 500;
+    int S = 10;
 
     double diffusion_undim_x = diffusion_dim * pow(M*dx,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt);
     double diffusion_undim_y = diffusion_dim * pow(N*dy,2)/pow(size_dim,2) * time_dim/(TIME_MAX*dt);

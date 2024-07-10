@@ -9,7 +9,7 @@ namespace solvers
     class Space2d_reg
     {
     private:
-        Vector3d<int> source;
+        std::vector<Vector3d<int>> source;
         int radius_x;
         int radius_y;
         int N, M;
@@ -23,11 +23,11 @@ namespace solvers
     public:
         void diffusion_step(T * data, T * data_new, bool is_monomer);
         void advection_step(T * data, T * data_new);
-        Space2d_reg(T D_x, T D_y, T J, int N, int M, T dx, T dy, T dt, Vector3d<int> source, T x, T y, int radius_x, int radius_y):
+        Space2d_reg(T D_x, T D_y, T J, int N, int M, T dx, T dy, T dt, std::vector<Vector3d<int>> source, T x, T y, int radius_x, int radius_y):
                     D_x(D_x), D_y(D_y), J(J), N(N), M(M), dx(dx), dy(dy), dt(dt), source(source), radius_x(radius_x), radius_y(radius_y)
                     {
                         std::cout << "radius x: " << radius_x << " raidus y: " << radius_y << "\n";
-                        std::cout << "source x: " << source.x << " source y: " << source.y << "\n";
+                        std::cout << "source x: " << source[0].x << " source y: " << source[0].y << "\n";
                         init_data(x, y);
                     };
         ~Space2d_reg();

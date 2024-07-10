@@ -75,28 +75,31 @@ namespace solvers
             c[N-1] = 1.0;
             rhs[0] = 0.0;
             rhs[N-1] = 0.0;
-            if (j >= source.x-radius_x && j <= source.x+radius_x)
-            {
-                if (source.y-radius_y >=0)
+            for (int m = 0; m < source.size(); m++)
+            { 
+                if (j >= source[m].x-radius_x && j <= source[m].x+radius_x)
                 {
-                    a[source.y-radius_y] = 0.0;
-                    b[source.y-radius_y] = 1.0;
-                    c[source.y-radius_y] = -1.0;
-                    rhs[source.y-radius_y] = (is_monomer ? -J*dy*0.5 : -rhs[source.y-radius_y]*dy*0.5);
-                }
-                if (source.y+radius_y <=N-1)
-                {
-                    a[source.y+radius_y] = -1.0;
-                    b[source.y+radius_y] = 0.0;
-                    c[source.y+radius_y] = 1.0;
-                    rhs[source.y+radius_y] = (is_monomer ? J*dy*0.5 : rhs[source.y+radius_y]*dy*0.5);
-                }
-                for (int i = source.y - radius_y+1; i < source.y + radius_y; i++)
-                {
-                    a[i] = 0.0;
-                    b[i] = 0.0;
-                    c[i] = 1.0;
-                    rhs[i] = (is_monomer ? J : rhs[i]);
+                    if (source[m].y-radius_y >=0)
+                    {
+                        a[source[m].y-radius_y] = 0.0;
+                        b[source[m].y-radius_y] = 1.0;
+                        c[source[m].y-radius_y] = -1.0;
+                        rhs[source[m].y-radius_y] = (is_monomer ? -J*dy*0.5 : -rhs[source[m].y-radius_y]*dy*0.5);
+                    }
+                    if (source[m].y+radius_y <=N-1)
+                    {
+                        a[source[m].y+radius_y] = -1.0;
+                        b[source[m].y+radius_y] = 0.0;
+                        c[source[m].y+radius_y] = 1.0;
+                        rhs[source[m].y+radius_y] = (is_monomer ? J*dy*0.5 : rhs[source[m].y+radius_y]*dy*0.5);
+                    }
+                    for (int i = source[m].y - radius_y+1; i < source[m].y + radius_y; i++)
+                    {
+                        a[i] = 0.0;
+                        b[i] = 0.0;
+                        c[i] = 1.0;
+                        rhs[i] = (is_monomer ? J : rhs[i]);
+                    }
                 }
             }
             solve_matrix(N, a, c, b, rhs, output);
@@ -139,28 +142,31 @@ namespace solvers
             c[M-1] = 1.0;
             rhs[0] = 0.0;
             rhs[M-1] = 0.0;
-            if (i >= source.y-radius_y && i <= source.y+radius_y)
+            for (int m = 0; m < source.size(); m++)
             {
-                if (source.x-radius_x >=0)
+                if (i >= source[m].y-radius_y && i <= source[m].y+radius_y)
                 {
-                    a[source.x-radius_x] = 0.0;
-                    b[source.x-radius_x] = 1.0;
-                    c[source.x-radius_x] = -1.0;
-                    rhs[source.x-radius_x] = (is_monomer ? -J*dx*0.5 : -rhs[source.x-radius_x]*dx*0.5);
-                }
-                if (source.x+radius_x <=M-1)
-                {
-                    a[source.x+radius_x] = -1.0;
-                    b[source.x+radius_x] = 0.0;
-                    c[source.x+radius_x] = 1.0;
-                    rhs[source.x+radius_x] = (is_monomer ? J*dx*0.5 : rhs[source.x+radius_x]*dx*0.5);
-                }
-                for (int j = source.x - radius_x+1; j < source.x + radius_x; j++)
-                {
-                    a[j] = 0.0;
-                    b[j] = 0.0;
-                    c[j] = 1.0;
-                    rhs[j] = (is_monomer ? J : rhs[j]);
+                    if (source[m].x-radius_x >=0)
+                    {
+                        a[source[m].x-radius_x] = 0.0;
+                        b[source[m].x-radius_x] = 1.0;
+                        c[source[m].x-radius_x] = -1.0;
+                        rhs[source[m].x-radius_x] = (is_monomer ? -J*dx*0.5 : -rhs[source[m].x-radius_x]*dx*0.5);
+                    }
+                    if (source[m].x+radius_x <=M-1)
+                    {
+                        a[source[m].x+radius_x] = -1.0;
+                        b[source[m].x+radius_x] = 0.0;
+                        c[source[m].x+radius_x] = 1.0;
+                        rhs[source[m].x+radius_x] = (is_monomer ? J*dx*0.5 : rhs[source[m].x+radius_x]*dx*0.5);
+                    }
+                    for (int j = source[m].x - radius_x+1; j < source[m].x + radius_x; j++)
+                    {
+                        a[j] = 0.0;
+                        b[j] = 0.0;
+                        c[j] = 1.0;
+                        rhs[j] = (is_monomer ? J : rhs[j]);
+                    }
                 }
             }
             solve_matrix(M, a, c, b, rhs, output);
